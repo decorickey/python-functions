@@ -16,7 +16,7 @@ class Performer(models.Model):
         name = attributes.UnicodeAttribute(hash_key=True)
 
     id = attributes.NumberAttribute(hash_key=True)
-    name = attributes.UnicodeAttribute(range_key=True)
+    name = attributes.UnicodeAttribute()
     name_gsi = NameGSI()
 
 
