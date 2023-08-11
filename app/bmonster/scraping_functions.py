@@ -45,7 +45,7 @@ def scraping_performer():
 
 
 def _scraping_schedule(soup: BeautifulSoup):
-    Item = namedtuple("Item", ["start_at", "instructor", "program"])
+    Item = namedtuple("Item", ["start_at", "instructor", "program", "url"])
     week = soup.select("body div#scroll-box div.grid div.flex-no-wrap")
     for i, day in enumerate(week):
         panels = day.select("li.panel")
@@ -73,9 +73,14 @@ def _scraping_schedule(soup: BeautifulSoup):
                     continue
             else:
                 continue
+        
+            if (a := panel.select("a")) and (href := a[0].get("href")):
+                url = href
+            else:
+                url = ""
 
             if start_at and instructor and program:
-                yield Item(start_at=start_at, instructor=instructor, program=program)
+                yield Item(start_at=start_at, instructor=instructor, program=program, url=url)
 
 
 def scraping_schedule_by_performer(performer_id: int, performer_name: str):
@@ -88,6 +93,7 @@ def scraping_schedule_by_performer(performer_id: int, performer_name: str):
             start_at=item.start_at,
             performer_name=performer_name,
             program=item.program,
+            url=item.url,
         )
 
 

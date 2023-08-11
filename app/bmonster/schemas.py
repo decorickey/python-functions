@@ -17,3 +17,4 @@ class ScheduleSchema(CustomBaseModel):
     start_at: datetime = Field(alias="startAt")
     performer_name: str = Field(alias="performerName")
     program: str
+    url: str = ""
