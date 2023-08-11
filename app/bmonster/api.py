@@ -11,7 +11,10 @@ router = APIRouter()
 
 @router.get("/performers/")
 def get_performers() -> list[PerformerSchema]:
-    return [PerformerSchema.model_validate(item) for item in Performer.scan()]
+    return sorted(
+        [PerformerSchema.model_validate(item) for item in Performer.scan()],
+        key=lambda performer: performer.id,
+    )
 
 
 @router.get("/performers/{performer_id}/schedules/")
