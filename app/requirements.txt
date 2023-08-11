@@ -1,0 +1,13 @@
+black
+pylint
+
+fastapi
+pydantic
+uvicorn
+mangum
+
+beautifulsoup4
+boto3
+pynamodb
+pyjwt
+requests

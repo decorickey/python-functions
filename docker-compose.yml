@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    platform: linux/amd64
+    build: .
+    volumes:
+      - ./app:/app/app
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      STAGE: local
+      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+      BMONSTER_PERFORMER_TABLE: bmonster-performer-table-local
+      BMONSTER_PERFORMER_NAME_GSI: bmonster-performer-name-gsi-local
+      BMONSTER_SCHEDULE_TABLE: bmonster-schedule-table-local
+      BMONSTER_SCHEDULE_PERFORMER_GSI: bmonster-schedule-performer-gsi-local
+    networks:
+      - cloudformation-local-network
+
+networks:
+  cloudformation-local-network:
+    external: true
