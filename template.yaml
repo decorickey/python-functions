@@ -67,72 +67,72 @@ Resources:
       Dockerfile: Dockerfile
       DockerTag: !Ref Stage
 
-  BmonsterDeadLetterQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub bmonster-dead-letter-queue-${Stage}.fifo
-      FifoQueue: true
+  # BmonsterDeadLetterQueue:
+  #   Type: AWS::SQS::Queue
+  #   Properties:
+  #     QueueName: !Sub bmonster-dead-letter-queue-${Stage}.fifo
+  #     FifoQueue: true
 
-  BmonsterScrapingScheduleQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub bmonster-scarping-schedule-queue-${Stage}.fifo
-      FifoQueue: true
-      ContentBasedDeduplication: true
-      DelaySeconds: 10
-      MessageRetentionPeriod: 3600
-      ReceiveMessageWaitTimeSeconds: 20
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt BmonsterDeadLetterQueue.Arn
-        maxReceiveCount: 1
-      VisibilityTimeout: 30
+  # BmonsterScrapingScheduleQueue:
+  #   Type: AWS::SQS::Queue
+  #   Properties:
+  #     QueueName: !Sub bmonster-scarping-schedule-queue-${Stage}.fifo
+  #     FifoQueue: true
+  #     ContentBasedDeduplication: true
+  #     DelaySeconds: 10
+  #     MessageRetentionPeriod: 3600
+  #     ReceiveMessageWaitTimeSeconds: 20
+  #     RedrivePolicy:
+  #       deadLetterTargetArn: !GetAtt BmonsterDeadLetterQueue.Arn
+  #       maxReceiveCount: 1
+  #     VisibilityTimeout: 30
 
-  BmonsterScrapingScheduleProducerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub bmonster-scraping-schedule-producer-function-${Stage}
-      PackageType: Image
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole
-      Timeout: 30
-      Environment:
-        Variables:
-          SCRAPING_QUEUE_URL: !GetAtt BmonsterScrapingScheduleQueue.QueueUrl
-      Events:
-        ScheduleEvent:
-          Type: ScheduleV2
-          Properties:
-            Name: !Sub bmonster-scraping-schedule-producer-function-${Stage}
-            RetryPolicy:
-              MaximumRetryAttempts: 5
-              MaximumEventAgeInSeconds: 60
-            RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/SchedulerInvokeFunctionRole
-            ScheduleExpression: cron(0 0 * * ? *)
-            ScheduleExpressionTimezone: Asia/Tokyo
-      ImageConfig:
-        Command:
-          - "bmonster.lambda_functions.scraping.schedule.producer.lambda_handler"
-    Metadata:
-      DockerContext: ./app
-      Dockerfile: Dockerfile
-      DockerTag: !Ref Stage
+  # BmonsterScrapingScheduleProducerFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: !Sub bmonster-scraping-schedule-producer-function-${Stage}
+  #     PackageType: Image
+  #     Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole
+  #     Timeout: 30
+  #     Environment:
+  #       Variables:
+  #         SCRAPING_QUEUE_URL: !GetAtt BmonsterScrapingScheduleQueue.QueueUrl
+  #     Events:
+  #       ScheduleEvent:
+  #         Type: ScheduleV2
+  #         Properties:
+  #           Name: !Sub bmonster-scraping-schedule-producer-function-${Stage}
+  #           RetryPolicy:
+  #             MaximumRetryAttempts: 5
+  #             MaximumEventAgeInSeconds: 60
+  #           RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/SchedulerInvokeFunctionRole
+  #           ScheduleExpression: cron(0 0 * * ? *)
+  #           ScheduleExpressionTimezone: Asia/Tokyo
+  #     ImageConfig:
+  #       Command:
+  #         - "bmonster.lambda_functions.scraping.schedule.producer.lambda_handler"
+  #   Metadata:
+  #     DockerContext: ./app
+  #     Dockerfile: Dockerfile
+  #     DockerTag: !Ref Stage
 
-  BmonsterScrapingScheduleConsumerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub bmonster-scraping-schedule-consumer-function-${Stage}
-      PackageType: Image
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole
-      Timeout: 30
-      Events:
-        SQSEvent:
-          Type: SQS
-          Properties:
-            BatchSize: 1
-            Queue: !GetAtt BmonsterScrapingScheduleQueue.Arn
-      ImageConfig:
-        Command:
-          - "bmonster.lambda_functions.scraping.schedule.consumer.lambda_handler"
-    Metadata:
-      DockerContext: ./app
-      Dockerfile: Dockerfile
-      DockerTag: !Ref Stage
+  # BmonsterScrapingScheduleConsumerFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: !Sub bmonster-scraping-schedule-consumer-function-${Stage}
+  #     PackageType: Image
+  #     Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole
+  #     Timeout: 30
+  #     Events:
+  #       SQSEvent:
+  #         Type: SQS
+  #         Properties:
+  #           BatchSize: 1
+  #           Queue: !GetAtt BmonsterScrapingScheduleQueue.Arn
+  #     ImageConfig:
+  #       Command:
+  #         - "bmonster.lambda_functions.scraping.schedule.consumer.lambda_handler"
+  #   Metadata:
+  #     DockerContext: ./app
+  #     Dockerfile: Dockerfile
+  #     DockerTag: !Ref Stage
