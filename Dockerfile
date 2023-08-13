@@ -1,7 +1,7 @@
 FROM python:3.9
 
 WORKDIR /app
+COPY ./requirements.txt ./
 
-COPY ./app/requirements.txt /app/app/
 RUN pip install --upgrade pip
-RUN pip install -r app/requirements.txt
+RUN pip install -r requirements.txt
