@@ -9,6 +9,8 @@ Parameters:
     AllowedValues:
       - local
       - cloud
+  Referer:
+    Type: String
 
 Globals:
   Function:
@@ -30,6 +32,28 @@ Resources:
     Properties:
       StageName: !Ref Stage
       OpenApiVersion: 3.0.1 # ステージ"Stage"を作成しない https://docs.aws.amazon.com/ja_jp/serverless-application-model/latest/developerguide/sam-resource-api.html#sam-api-openapiversion
+      Auth:
+        ResourcePolicy:
+          CustomStatements:
+            [
+              {
+                "Effect": "Deny",
+                "Principal": "*",
+                "Action": "execute-api:Invoke",
+                "Resource": "execute-api:/*",
+                "Condition": {
+                  "StringNotEquals": {
+                    "aws:Referer": !Ref Referer
+                  }
+                }
+              },
+              {
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "execute-api:Invoke",
+                "Resource": "execute-api:/*"
+              }
+            ]
 
   FastApiFunction:
     Type: AWS::Serverless::Function
