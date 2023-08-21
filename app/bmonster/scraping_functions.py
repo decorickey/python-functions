@@ -1,7 +1,7 @@
 import logging
 import urllib.parse
 from collections import namedtuple
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import requests
@@ -73,7 +73,7 @@ def _scraping_schedule(soup: BeautifulSoup):
                     continue
             else:
                 continue
-        
+
             if (a := panel.select("a")) and (href := a[0].get("href")):
                 url = href
             else:
@@ -85,7 +85,10 @@ def _scraping_schedule(soup: BeautifulSoup):
 
 def scraping_schedule_by_performer(performer_id: int, performer_name: str):
     url = urllib.parse.urljoin(BASE_URL, SCHEDULE_PATH)
-    params = {"instructor_id": performer_id, "date": date.today().isoformat()}
+    params = {
+        "instructor_id": performer_id,
+        "date": datetime.now(tz=ZoneInfo("Asia/Tokyo")).today().isoformat(),
+    }
     soup = _get_html_soup(url, params)
     for item in _scraping_schedule(soup):
         yield ScheduleSchema(
