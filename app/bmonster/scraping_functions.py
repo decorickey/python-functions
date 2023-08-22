@@ -87,7 +87,7 @@ def scraping_schedule_by_performer(performer_id: int, performer_name: str):
     url = urllib.parse.urljoin(BASE_URL, SCHEDULE_PATH)
     params = {
         "instructor_id": performer_id,
-        "date": datetime.now(tz=ZoneInfo("Asia/Tokyo")).today().isoformat(),
+        "date": datetime.now(tz=ZoneInfo("Asia/Tokyo")).isoformat().split("T")[0],
     }
     soup = _get_html_soup(url, params)
     for item in _scraping_schedule(soup):
