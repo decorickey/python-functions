@@ -18,6 +18,7 @@ class Performer(models.Model):
     id = attributes.NumberAttribute(hash_key=True)
     name = attributes.UnicodeAttribute()
     name_gsi = NameGSI()
+    programs = attributes.ListAttribute(default=list, of=str)
 
 
 class Schedule(models.Model):

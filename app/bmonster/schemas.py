@@ -10,6 +10,7 @@ class CustomBaseModel(BaseModel):
 class PerformerSchema(CustomBaseModel):
     id: int
     name: str
+    programs: list[str] | None = None
 
 
 class ScheduleSchema(CustomBaseModel):
