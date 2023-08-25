@@ -12,9 +12,11 @@ def main(studio_name: str, studio_code: str):
     with Schedule.batch_write() as batch:
         for item in scraping_schedule_by_studio(studio_name, studio_code):
             programs_by_performer[item.performer_name].add(item.program)
+            props = item.model_dump()
+            props.pop("url")
             batch.save(
                 Schedule(
-                    **item.model_dump(),
+                    **props,
                     ttl=datetime.now(tz=ZoneInfo("Asia/Tokyo")) + timedelta(days=1)
                 )
             )
@@ -23,8 +25,11 @@ def main(studio_name: str, studio_code: str):
         for performer_name, programs in programs_by_performer.items():
             performer: Performer
             for performer in Performer.name_gsi.query(performer_name, limit=1):
-                if set(performer.programs) != programs:
-                    performer.programs = sorted(list(set(performer.programs) | programs))
+                if not performer.programs:
+                    performer.programs = sorted(list(programs))
+                    batch.save(performer)
+                elif set(performer.programs) != programs:
+                    performer.programs = sorted(list(programs | set(performer.programs)))
                     batch.save(performer)
 
 

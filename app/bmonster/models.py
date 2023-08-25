@@ -18,7 +18,7 @@ class Performer(models.Model):
     id = attributes.NumberAttribute(hash_key=True)
     name = attributes.UnicodeAttribute()
     name_gsi = NameGSI()
-    programs = attributes.ListAttribute(default=list, of=str)
+    programs = attributes.ListAttribute(of=attributes.UnicodeAttribute, null=True)
 
 
 class Schedule(models.Model):
@@ -43,15 +43,12 @@ class Schedule(models.Model):
 
 
 if os.environ["STAGE"] == "local":
-    # Lambda関数のPackageTypeがImageの場合は自動で環境変数が設定されているため以下指定不要
-    # os.environ["AWS_ACCESS_KEY_ID"] = "AWS_ACCESS_KEY_ID"
-    # os.environ["AWS_SECRET_ACCESS_KEY"] = "AWS_SECRET_ACCESS_KEY"
     HOST = "http://dynamodb-local:8000"
     BILLING_MODE = "PAY_PER_REQUEST"
     Performer.Meta.host = HOST
-    Schedule.Meta.host = HOST
     Performer.Meta.billing_mode = BILLING_MODE
     Schedule.Meta.billing_mode = BILLING_MODE
+    Schedule.Meta.host = HOST
 
     if not Performer.exists():
         Performer.create_table()

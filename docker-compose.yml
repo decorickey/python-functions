@@ -11,8 +11,8 @@ services:
       - "8000:8000"
     environment:
       STAGE: local
-      AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+      AWS_ACCESS_KEY_ID: ACCESS
+      AWS_SECRET_ACCESS_KEY: SECRET
       BMONSTER_PERFORMER_TABLE: bmonster-performer-table-local
       BMONSTER_PERFORMER_NAME_GSI: bmonster-performer-name-gsi-local
       BMONSTER_SCHEDULE_TABLE: bmonster-schedule-table-local
